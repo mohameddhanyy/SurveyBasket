@@ -1,6 +1,9 @@
 ﻿namespace SurveyBasket.Api.DTOs.Requests
 {
     public record PollRequest(
-        string Name,
-        string Description);
+        string Title,
+        string Summary,
+        bool IsPublished,
+        DateOnly StartsAt,
+        DateOnly EndsAt);
 }

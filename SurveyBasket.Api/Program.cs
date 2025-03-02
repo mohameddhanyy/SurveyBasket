@@ -1,14 +1,21 @@
-using Core.ServiceContracts;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Service;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasket.Api.Helpers;
 using SurveyBasket.Api.Middlewares;
+using SurveyBasket.Api.Presistance;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<SurveyBasketDBContext>(options =>
+{
+    options.UseSqlServer(connectionString);
+});
 
 // Add services to the container.
 

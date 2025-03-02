@@ -1,6 +1,7 @@
-﻿using Core.Models;
-using Mapster;
+﻿using Mapster;
+using SurveyBasket.Api.DTOs.Requests;
 using SurveyBasket.Api.DTOs.Responses;
+using SurveyBasket.Api.Presistance.Models;
 
 namespace SurveyBasket.Api.Helpers.Mapping
 {
@@ -8,8 +9,8 @@ namespace SurveyBasket.Api.Helpers.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            //config.NewConfig<Poll, PollResponse>()
-            //    .Map(dest => dest.Notes, src => src.Description);
+            //config.NewConfig<PollRequest, Poll>()
+            //    .Ignore(dest => dest.Id);
         }
     }
 }

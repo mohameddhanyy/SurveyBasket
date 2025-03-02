@@ -1,9 +1,9 @@
-﻿using Core.ServiceContracts;
-using FluentValidation;
+﻿using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using Service;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using SurveyBasket.Api.ServiceContracts;
 using System.Reflection;
 
 namespace SurveyBasket.Api.Helpers

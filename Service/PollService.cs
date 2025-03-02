@@ -1,4 +1,4 @@
-﻿using Core.Models;
+﻿using Core.Data.Models;
 using Core.ServiceContracts;
 using System;
 using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace Service
         private static readonly List<Poll> _polls = [
       new Poll(){
             Id = 1,
-            Name = "Poll 1",
-            Description = "this first poll"
+            Title = "Poll 1",
+            Summary = "this first poll"
         }];
 
         public Poll? Add(Poll poll)
@@ -34,8 +34,8 @@ namespace Service
             var currentPoll = Get(id);
             if (currentPoll is null) return false;
 
-            currentPoll.Description = poll.Description;
-            currentPoll.Name = poll.Name;
+            currentPoll.Summary = poll.Summary;
+            currentPoll.Title = poll.Title;
 
             return true; 
 
