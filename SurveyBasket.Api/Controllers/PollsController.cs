@@ -2,8 +2,8 @@
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
-using SurveyBasket.Api.DTOs.Requests;
-using SurveyBasket.Api.DTOs.Responses;
+using Microsoft.AspNetCore.Authorization;
+using SurveyBasket.Api.DTOs.Polls;
 using SurveyBasket.Api.Presistance.Models;
 using SurveyBasket.Api.ServiceContracts;
 using System.Threading.Tasks;
@@ -18,6 +18,7 @@ public class PollsController(IPollService pollService, IMapper mapper) : Control
 
 
     [HttpGet("")]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         var polls = await _poll.GetAllAsync();
