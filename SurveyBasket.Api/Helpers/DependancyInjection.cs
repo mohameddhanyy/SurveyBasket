@@ -18,7 +18,7 @@ namespace SurveyBasket.Api.Helpers
 {
     public static class DependancyInjection
     {
-        public static IServiceCollection AddDependancies(this IServiceCollection services)
+        public static IServiceCollection AddDependancies(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,6 +29,22 @@ namespace SurveyBasket.Api.Helpers
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
+
+            // Identity 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<SurveyBasketDBContext>();
+
+            // Add Options
+
+            //services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+            services.AddOptions<JwtOptions>()
+                .BindConfiguration(nameof(JwtOptions))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+
+            // Jwt
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,16 +58,13 @@ namespace SurveyBasket.Api.Helpers
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("this#$is^secret*key")),
-                    ValidIssuer = "SurveyBasket App",
-                    ValidAudience = "SurveyBasket App Users"
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions?.Key!)),
+                    ValidIssuer = jwtOptions?.Issuer,
+                    ValidAudience = jwtOptions?.Audience
                 };
-
             });
 
-            // Identity 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<SurveyBasketDBContext>();
+
             // Add Mapster
             var mappingConfig = TypeAdapterConfig.GlobalSettings;
             mappingConfig.Scan(Assembly.GetExecutingAssembly());

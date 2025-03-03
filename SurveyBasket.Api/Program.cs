@@ -19,10 +19,10 @@ builder.Services.AddDbContext<SurveyBasketDBContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
-
+var configurations = builder.Configuration;
 // Add services to the container.
 
-builder.Services.AddDependancies();
+builder.Services.AddDependancies(configurations);
 
 var app = builder.Build();
 
