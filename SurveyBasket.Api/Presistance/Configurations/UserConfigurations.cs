@@ -13,7 +13,13 @@ namespace SurveyBasket.Api.Presistance.Configrations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.Property(x => x.FirstName)
+
+            builder.OwnsMany(x => x.RefreshTokens)
+                .ToTable("RefreshTokens")
+                .WithOwner()
+                .HasForeignKey("UserId");
+
+                builder.Property(x => x.FirstName)
                 .HasMaxLength(50);
 
             builder.Property(x => x.LastName)
