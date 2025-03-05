@@ -5,14 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SurveyBasket.Api.Presistance
 {
-    public class SurveyBasketDBContext(DbContextOptions<SurveyBasketDBContext> options):
+    public class SurveyBasketDBContext(DbContextOptions<SurveyBasketDBContext> options, IHttpContextAccessor httpContextAccessor) :
         IdentityDbContext<ApplicationUser>(options)
     {
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+
         public DbSet<Poll> Polls { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,5 +23,26 @@ namespace SurveyBasket.Api.Presistance
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
         }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<AuditableEntity>();
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            foreach (var entityEntry in entries)
+            {
+                if(entityEntry.State == EntityState.Added)
+                {
+                    entityEntry.Property(x => x.CreatedById).CurrentValue = userId!;
+                }
+                else if(entityEntry.State == EntityState.Modified)
+                {
+                    entityEntry.Property(x => x.UpdatedById).CurrentValue = userId!;
+                    entityEntry.Property(x => x.UpdatedOn).CurrentValue = DateTime.UtcNow;
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
+
+        }
     }
+
 }

@@ -25,6 +25,17 @@ namespace SurveyBasket.Api.Helpers
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+            // Add Cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+
+                });
+            }); 
             // Add services
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();

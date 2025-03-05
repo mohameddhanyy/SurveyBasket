@@ -11,6 +11,8 @@ namespace SurveyBasket.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
+
 public class PollsController(IPollService pollService, IMapper mapper) : ControllerBase
 {
     private readonly IPollService _poll = pollService;
@@ -18,7 +20,6 @@ public class PollsController(IPollService pollService, IMapper mapper) : Control
 
 
     [HttpGet("")]
-    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         var polls = await _poll.GetAllAsync();
@@ -42,7 +43,8 @@ public class PollsController(IPollService pollService, IMapper mapper) : Control
     public async Task<IActionResult> Add([FromBody] PollRequest request)
     {
         var poll = await _poll.AddAsync(request.Adapt<Poll>());
-        return CreatedAtAction(nameof(Get), new { id = poll?.Id }, poll);
+        var pollRespone = poll.Adapt<PollResponse>();
+        return CreatedAtAction(nameof(Get), new { id = poll?.Id }, pollRespone);
     }
 
 
