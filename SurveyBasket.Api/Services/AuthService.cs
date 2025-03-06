@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SurveyBasket.Api.Abstractions;
 using SurveyBasket.Api.Authentications;
 using SurveyBasket.Api.DTOs.Auth;
+using SurveyBasket.Api.Errors;
 using SurveyBasket.Api.Presistance.Models;
 using SurveyBasket.Api.ServiceContracts;
 using System.Security.Cryptography;
@@ -14,15 +16,15 @@ namespace SurveyBasket.Api.Services
 
         private readonly int _refreshTokenExpireyDays = 14;
 
-        public async Task<AuthResponse?> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
-                return null;
+                return Result.Failure<AuthResponse>(AuthErrors.InValidCredentials);
 
             var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
             if (!isValidPassword)
-                return null;
+                return Result.Failure<AuthResponse>(AuthErrors.InValidCredentials);
 
             var (token, expireIn) = _jwtProvider.GenerateToken(user);
 
@@ -36,11 +38,13 @@ namespace SurveyBasket.Api.Services
             });
 
             await _userManager.UpdateAsync(user);
-            return new AuthResponse(user.Id , user.Email,user.FirstName,user.LastName,token,expireIn,refreshToken,refreshTokenExpiration);
+
+            var response = new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, token, expireIn, refreshToken, refreshTokenExpiration);
+            return Result.Success(response);
         }
 
 
-        public async Task<AuthResponse?> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+        public async Task<AuthResponse> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
         {
             var userId = _jwtProvider.ValidateToken(token);
             if (userId is null) return null!;

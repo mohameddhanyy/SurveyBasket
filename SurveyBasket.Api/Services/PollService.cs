@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SurveyBasket.Api.Errors;
 using SurveyBasket.Api.Presistance;
 using SurveyBasket.Api.Presistance.Models;
 using SurveyBasket.Api.ServiceContracts;
@@ -14,60 +15,77 @@ namespace Service
     {
         private readonly SurveyBasketDBContext _context = context;
 
-        public async Task<Poll?> AddAsync(Poll poll)
+
+        public async Task<Result<PollResponse>> GetAsync(int id)
         {
-            await _context.Polls.AddAsync(poll);
-            await _context.SaveChangesAsync();
-            return poll;
+            var poll = await _context.Polls.SingleOrDefaultAsync(x => x.Id == id);
+
+            return poll is not null
+                ? Result.Success(poll.Adapt<PollResponse>())
+                : Result.Failure<PollResponse>(PollErrors.NoPollFound);
         }
 
-        public async Task<Poll?> GetAsync(int id)
-        {
-            var poll = await _context.Polls.FindAsync(id);
-            return poll;
-        }
-
-        public async Task<IEnumerable<Poll>> GetAllAsync()
+        public async Task<Result<IEnumerable<PollResponse>>> GetAllAsync()
         {
             var polls = await _context.Polls.AsNoTracking().ToListAsync();
-            return polls;
+
+            return polls is not null
+                ? Result.Success(polls.Adapt<IEnumerable<PollResponse>>())
+                : Result.Failure<IEnumerable<PollResponse>>(PollErrors.NoPollFound);
         }
 
-        public async Task<bool> UpdateAsync(int id, Poll updatedPoll)
+        public async Task<Poll?> AddAsync(PollRequest poll)
         {
-            var poll = await GetAsync(id);
-            if (poll is null) return false;
-
-            poll.Summary = updatedPoll.Summary;
-            poll.Title = updatedPoll.Title;
-            poll.StartsAt = updatedPoll.StartsAt;
-            poll.EndsAt = updatedPoll.EndsAt;
-
+            await _context.Polls.AddAsync(poll.Adapt<Poll>());
             await _context.SaveChangesAsync();
-            return true;
-
-        }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var poll = await GetAsync(id);
-            if (poll is null) return false;
-
-            _context.Polls.Remove(poll);
-            await _context.SaveChangesAsync();
-
-            return true;
+            return poll.Adapt<Poll>();
         }
 
-        public async Task<bool> TogglePublishStatusAsync(int id)
+
+        public async Task<Result> UpdateAsync(int id, PollRequest updatedPollRequest)
         {
-            var poll = await GetAsync(id);
-            if (poll is null) return false;
+            var existingPoll = await _context.Polls.FindAsync(id);
+            if (existingPoll is null)
+            {
+                return Result.Failure(PollErrors.NoPollFound);
+            }
 
-            poll.IsPublished = !poll.IsPublished;
+            existingPoll.Summary = updatedPollRequest.Summary;
+            existingPoll.Title = updatedPollRequest.Title;
+            existingPoll.StartsAt = updatedPollRequest.StartsAt;
+            existingPoll.EndsAt = updatedPollRequest.EndsAt;
+
             await _context.SaveChangesAsync();
-            return true;
 
+            return Result.Success();
+        }
+        public async Task<Result<PollResponse>> DeleteAsync(int id)
+        {
+            var pollResult = await _context.Polls.SingleOrDefaultAsync(x => x.Id == id);
+            if(pollResult is null)
+            {
+                return Result.Failure<PollResponse>(PollErrors.NoPollFound);
+            }
 
+            _context.Polls.Remove(pollResult);
+            await _context.SaveChangesAsync();
+
+            var pollResponse = pollResult.Adapt<PollResponse>();
+            return Result.Success(pollResponse);
+        }
+
+        public async Task<Result<PollResponse>> TogglePublishStatusAsync(int id)
+        {
+            var pollResult = await _context.Polls.SingleOrDefaultAsync(x => x.Id == id);
+            if (pollResult is null)
+            {
+                return Result.Failure<PollResponse>(PollErrors.NoPollFound);
+            }
+            pollResult.IsPublished = !pollResult.IsPublished;
+            await _context.SaveChangesAsync();
+            var pollResponse = pollResult.Adapt<PollResponse>();
+            return Result.Success(pollResponse);
         }
     }
+
 }
