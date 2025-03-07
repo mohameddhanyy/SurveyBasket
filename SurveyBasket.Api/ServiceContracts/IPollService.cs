@@ -13,7 +13,7 @@ namespace SurveyBasket.Api.ServiceContracts
         Task<Result<IEnumerable<PollResponse>>> GetAllAsync();
         Task<Result<PollResponse>> GetAsync(int id);
 
-        Task<Poll?> AddAsync(PollRequest poll);
+        Task<Result<PollResponse>> AddAsync(PollRequest poll);
         Task<Result> UpdateAsync(int id, PollRequest poll);
 
         Task<Result<PollResponse>> DeleteAsync(int id);

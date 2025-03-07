@@ -41,9 +41,11 @@ public class PollsController(IPollService pollService) : ControllerBase
     [HttpPost("")]
     public async Task<IActionResult> Add([FromBody] PollRequest request)
     {
-        var poll = await _poll.AddAsync(request);
-        var pollRespone = poll.Adapt<PollResponse>();
-        return CreatedAtAction(nameof(Get), new { id = poll?.Id }, pollRespone);
+        var result = await _poll.AddAsync(request);
+
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+            : Conflict(result.Error);
     }
 
 

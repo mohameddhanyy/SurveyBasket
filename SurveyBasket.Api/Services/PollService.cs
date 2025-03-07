@@ -34,11 +34,15 @@ namespace Service
                 : Result.Failure<IEnumerable<PollResponse>>(PollErrors.NoPollFound);
         }
 
-        public async Task<Poll?> AddAsync(PollRequest poll)
+        public async Task<Result<PollResponse>> AddAsync(PollRequest poll)
         {
+            var isExistingTitle = await _context.Polls.AnyAsync(x => x.Title == poll.Title);
+
+            if(isExistingTitle)
+               return Result.Failure<PollResponse>(PollErrors.DuplicatedTitle);
             await _context.Polls.AddAsync(poll.Adapt<Poll>());
             await _context.SaveChangesAsync();
-            return poll.Adapt<Poll>();
+            return Result.Success(poll.Adapt<PollResponse>());
         }
 
 

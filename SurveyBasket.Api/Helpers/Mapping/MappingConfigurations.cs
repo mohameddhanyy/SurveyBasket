@@ -9,6 +9,7 @@ namespace SurveyBasket.Api.Helpers.Mapping
         {
             //config.NewConfig<PollRequest, Poll>()
             //    .Ignore(dest => dest.Id);
+
         }
     }
 }
