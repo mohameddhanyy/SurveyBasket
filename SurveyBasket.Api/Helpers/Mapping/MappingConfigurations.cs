@@ -7,8 +7,8 @@ namespace SurveyBasket.Api.Helpers.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            //config.NewConfig<PollRequest, Poll>()
-            //    .Ignore(dest => dest.Id);
+            config.NewConfig<QuestionRequest, Question>()
+                .Map(dest => dest.Answers, src => src.Answers.Select(answer => new Answer { Content = answer }));
 
         }
     }
