@@ -11,8 +11,8 @@ namespace SurveyBasket.Api.ServiceContracts
     public interface IPollService
     {
         Task<Result<IEnumerable<PollResponse>>> GetAllAsync();
+        Task<IEnumerable<PollResponse>> GetCurrentAsync();
         Task<Result<PollResponse>> GetAsync(int id);
-
         Task<Result<PollResponse>> AddAsync(PollRequest poll);
         Task<Result> UpdateAsync(int id, PollRequest poll);
 

@@ -53,7 +53,7 @@ namespace SurveyBasket.Api.Services
             if (user is null) return null!;
 
             var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
-            if (userRefreshToken is null) return null;
+            if (userRefreshToken is null) return null!;
 
             userRefreshToken.RevokedOn = DateTime.UtcNow;
 

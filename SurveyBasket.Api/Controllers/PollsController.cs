@@ -36,6 +36,12 @@ public class PollsController(IPollService pollService) : ControllerBase
             ? Ok(result.Value)
             : NotFound(result?.Error);
     }
+    [HttpGet("current")]
+    public async Task<IActionResult> GetCurrent()
+    {
+        return Ok(await _poll.GetCurrentAsync());
+
+    }
 
 
     [HttpPost("")]

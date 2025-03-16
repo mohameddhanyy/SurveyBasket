@@ -9,4 +9,5 @@ global using SurveyBasket.Api.DTOs.Questions;
 global using SurveyBasket.Api.Presistance;
 global using Microsoft.EntityFrameworkCore;
 
+global using SurveyBasket.Api.Extensions;
 

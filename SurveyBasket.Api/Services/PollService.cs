@@ -33,6 +33,14 @@ namespace Service
                 ? Result.Success(polls.Adapt<IEnumerable<PollResponse>>())
                 : Result.Failure<IEnumerable<PollResponse>>(PollErrors.NoPollFound);
         }
+        public async Task<IEnumerable<PollResponse>> GetCurrentAsync()
+        {
+            return await _context.Polls
+                .Where(p => p.IsPublished && p.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow) && p.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow))
+                .AsNoTracking()
+                .ProjectToType<PollResponse>()
+                .ToListAsync();
+        }
 
         public async Task<Result<PollResponse>> AddAsync(PollRequest poll)
         {

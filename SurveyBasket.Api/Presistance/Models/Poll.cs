@@ -11,6 +11,7 @@ namespace SurveyBasket.Api.Presistance.Models
         public DateOnly StartsAt { get; set; }
         public DateOnly EndsAt { get; set; }
         public ICollection<Question> Questions { get; set; } = [];
+        public ICollection<Vote> Votes { get; set; } = [];
 
     }
 }

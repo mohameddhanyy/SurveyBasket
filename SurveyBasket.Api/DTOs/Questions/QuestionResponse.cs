@@ -2,7 +2,7 @@
 
 namespace SurveyBasket.Api.DTOs.Questions
 {
-    public record QuestionResponse(
+    public record   QuestionResponse(
         int Id ,
         string Content,
         IEnumerable<AnswerResponse> Answers
