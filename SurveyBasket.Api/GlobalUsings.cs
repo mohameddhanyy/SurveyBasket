@@ -10,4 +10,6 @@ global using SurveyBasket.Api.Presistance;
 global using Microsoft.EntityFrameworkCore;
 
 global using SurveyBasket.Api.Extensions;
+global using Microsoft.AspNetCore.Authorization;
+
 
