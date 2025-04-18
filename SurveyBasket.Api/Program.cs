@@ -14,7 +14,23 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddDependancies(builder.Configuration);
+
+// Output Cache
+///builder.Services.AddOutputCache(options =>
+///{
+///    options.AddPolicy("Polls", x =>
+///    x.Cache()
+///    .Expire(TimeSpan.FromSeconds(120))
+///    .Tag("Available"));
+///});
+
+// In-Memory Cache
+builder.Services.AddMemoryCache();
+
+// Distributed cache
+builder.Services.AddDistributedMemoryCache();
 
 builder.Host.UseSerilog((context, confiuration) =>
     confiuration.ReadFrom.Configuration(context.Configuration)
@@ -46,6 +62,9 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
 app.UseAuthorization();
+
+//app.UseOutputCache();
+
 
 app.MapControllers();
 

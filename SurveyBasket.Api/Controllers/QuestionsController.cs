@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using SurveyBasket.Api.Presistance.Models;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace SurveyBasket.Api.Controllers
 
 
         [HttpGet("")]
+        [OutputCache(PolicyName ="Polls")]
         public async Task<IActionResult> GetAll([FromRoute] int pollId, CancellationToken cancellation)
         {
             var result = await _questionService.GetAllAsync(pollId, cancellation);

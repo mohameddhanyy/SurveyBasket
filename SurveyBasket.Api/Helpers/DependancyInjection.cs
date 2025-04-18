@@ -43,6 +43,7 @@ namespace SurveyBasket.Api.Helpers
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IResultService, ResultService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
+            services.AddScoped<ICacheService, CacheService>();
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
