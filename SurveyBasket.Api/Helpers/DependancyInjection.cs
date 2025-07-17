@@ -70,7 +70,7 @@ namespace SurveyBasket.Api.Helpers
             }).AddJwtBearer(o =>
             {
                 o.SaveToken = true;
-                o.TokenValidationParameters = new TokenValidationParameters()
+                o.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
@@ -82,6 +82,12 @@ namespace SurveyBasket.Api.Helpers
                 };
             });
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequiredLength = 8;
+                //options.SignIn.RequireConfirmedEmail=true;
+            });
 
             // Add Mapster
             var mappingConfig = TypeAdapterConfig.GlobalSettings;
