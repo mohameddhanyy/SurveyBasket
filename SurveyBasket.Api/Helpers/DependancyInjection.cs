@@ -87,6 +87,7 @@ namespace SurveyBasket.Api.Helpers
                 // Password settings
                 options.Password.RequiredLength = 8;
                 //options.SignIn.RequireConfirmedEmail=true;
+                options.User.RequireUniqueEmail= true;
             });
 
             // Add Mapster
