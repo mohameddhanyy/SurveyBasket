@@ -12,4 +12,5 @@ global using Microsoft.EntityFrameworkCore;
 global using SurveyBasket.Api.Extensions;
 global using Microsoft.AspNetCore.Authorization;
 
+global using FluentValidation;
 

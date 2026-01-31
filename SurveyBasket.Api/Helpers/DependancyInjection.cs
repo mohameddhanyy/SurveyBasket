@@ -3,6 +3,8 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.IdentityModel.Tokens;
 using Service;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using SurveyBasket.Api.Authentications;
@@ -10,8 +12,8 @@ using SurveyBasket.Api.Presistance;
 using SurveyBasket.Api.Presistance.Models;
 using SurveyBasket.Api.ServiceContracts;
 using SurveyBasket.Api.Services;
+using SurveyBasket.Api.Settings;
 using System.Reflection;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace SurveyBasket.Api.Helpers
@@ -44,15 +46,20 @@ namespace SurveyBasket.Api.Helpers
             services.AddScoped<IResultService, ResultService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IEmailSender, EmailService>();
+            services.AddHttpContextAccessor();
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
 
             // Identity 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<SurveyBasketDBContext>();
+                .AddEntityFrameworkStores<SurveyBasketDBContext>()
+                .AddDefaultTokenProviders();
 
             // Add Options
+
+            services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
 
             //services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
             services.AddOptions<JwtOptions>()
@@ -86,7 +93,7 @@ namespace SurveyBasket.Api.Helpers
             {
                 // Password settings
                 options.Password.RequiredLength = 8;
-                //options.SignIn.RequireConfirmedEmail=true;
+                options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail= true;
             });
 
