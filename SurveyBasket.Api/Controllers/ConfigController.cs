@@ -20,5 +20,13 @@ namespace SurveyBasket.Api.Controllers
 
             return Ok(new { Key = key, Value = value });
         }
+
+        [HttpGet("TestAction")]
+        public IActionResult Action()
+        {
+
+            return Ok("Action Is Triggered Successfully");
+        }
+
     }
 }
