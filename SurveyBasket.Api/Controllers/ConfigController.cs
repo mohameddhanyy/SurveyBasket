@@ -24,9 +24,18 @@ namespace SurveyBasket.Api.Controllers
         [HttpGet("TestAction")]
         public IActionResult Action()
         {
-            
+
 
             return Ok("Action Is Triggered Successfully");
+        }
+
+
+        [HttpGet("CI-CD")]
+        public IActionResult CICD()
+        {
+
+
+            return Ok("Deployed successfully");
         }
 
     }
