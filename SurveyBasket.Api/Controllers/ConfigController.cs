@@ -38,5 +38,13 @@ namespace SurveyBasket.Api.Controllers
             return Ok("Deployed successfully");
         }
 
+        [HttpGet("CI-CD-Branches")]
+        public IActionResult CICDAnotherBranch()
+        {
+
+
+            return Ok("Deployed in another branch");
+        }
+
     }
 }
