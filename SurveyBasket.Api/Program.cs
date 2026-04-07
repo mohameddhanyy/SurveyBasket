@@ -11,6 +11,7 @@ using SurveyBasket.Api.Middlewares;
 using SurveyBasket.Api.Presistance;
 using SurveyBasket.Api.Presistance.Models;
 using System.Reflection;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,15 +44,39 @@ builder.Services.AddDbContext<SurveyBasketDBContext>(options =>
 });
 // Add services to the container.
 
+//add azure key vault configuration
+var keyVaultUrl = builder.Configuration["KeyVault:VaultUrl"];
+if (!string.IsNullOrEmpty(keyVaultUrl))
+{
+    try
+    {
+        builder.Configuration.AddAzureKeyVault(
+            new Uri(keyVaultUrl),
+            new Azure.Identity.DefaultAzureCredential()
+        );
+    }
+    catch (Exception ex)
+    {
+        // Log the error but don't fail the application startup
+        Console.WriteLine($"Warning: Failed to configure Azure Key Vault: {ex.Message}");
+    }
+}
+builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
+{
+    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    
+    options.RoutePrefix = string.Empty; 
+});
 
 app.UseSerilogRequestLogging();
 
